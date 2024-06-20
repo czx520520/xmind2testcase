@@ -5,7 +5,7 @@ import os
 import xmind
 import logging
 from xmind2testcase.parser import xmind_to_testsuites
-
+from xmindparser.__init__ import is_xmind_zen,xmind_to_dict
 
 def get_absolute_path(path):
     """
@@ -25,8 +25,14 @@ def get_absolute_path(path):
 def get_xmind_testsuites(xmind_file):
     """Load the XMind file and parse to `xmind2testcase.metadata.TestSuite` list"""
     xmind_file = get_absolute_path(xmind_file)
-    workbook = xmind.load(xmind_file)
-    xmind_content_dict = workbook.getData()
+    '''
+        适配xmind高版本
+    '''
+    if is_xmind_zen(xmind_file):
+        xmind_content_dict = xmind_to_dict(xmind_file)
+    else:
+        workbook = xmind.load(xmind_file)
+        xmind_content_dict = workbook.getData()
     logging.debug("loading XMind file(%s) dict data: %s", xmind_file, xmind_content_dict)
 
     if xmind_content_dict:
